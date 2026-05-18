@@ -6,6 +6,7 @@ import Appetizers from "./components/Appetizers";
 import Salads from "./components/Salads";
 import LunchFav from "./components/LunchFav";
 import Vegan from "./components/Vegan";
+import Footer from "./components/Footer";
 
 export default function Home() {
   return (
@@ -20,6 +21,7 @@ export default function Home() {
         <LunchFav />
         <Vegan />
       </div>
+      <Footer />
     </div>
   );
 }
