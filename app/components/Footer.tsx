@@ -1,10 +1,11 @@
+/* eslint-disable @next/next/no-img-element */
 export default function Footer() {
   return (
     <div className="bg-black w-full h-fit">
       <div className="bg-red-500"></div>
       <div>
         <div className="gap-2.5 items-center">
-          <img className="self-center" src={"./app-logo.svg"} />
+          <img className="self-center" src={"./app-logo.svg"} alt="" />
           <div>
             <div className="flex text-2xl">
               <p className="text-white">Nom</p>
