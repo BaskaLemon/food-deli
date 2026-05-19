@@ -44,44 +44,5 @@ export default function Footer() {
         <img className="rounded-4xl h-full  " src={"./food-bike.jpg"} alt="" />
       </div>
     </div>
-    // <div className="flex items-center w-screen h-screen">
-    //   <div className="container w-[40%] flex justify-center ">
-    //     <div className="flex flex-col gap-7 w-[50%] ">
-    //       <Link
-    //         href={"/"}
-    //         className="flex w-8 h-8 border border-stone-200 rounded-md justify-center items-center hover:scale-105 transition-transform"
-    //       >
-    //         <img src={"./Vector.svg"} alt="" />
-    //       </Link>
-    //       <div>
-    //         <p className="text-2xl font-bold ">Log in</p>
-    //         <p className="text-gray-400">
-    //           Log in to enjoy your favorite dishes.
-    //         </p>
-    //       </div>
-    //       <div className="flex flex-col gap-5">
-    //         <input
-    //           type="text"
-    //           placeholder="Enter your email address"
-    //           className="border border-stone-300 rounded-md w-full p-2 "
-    //         />
-
-    //         <p className="underline hover:opacity-60">Forgot password?</p>
-    //       </div>
-    //       <button className="bg-black text-white rounded-md p-2">
-    //         Let&apos;s go
-    //       </button>
-    //       <div className="flex gap-3 justify-center">
-    //         <p>Don’t have an account?</p>
-    //         <Link href={"./login"} className="text-blue-400 hover:opacity-60">
-    //           Sign up
-    //         </Link>
-    //       </div>
-    //     </div>
-    //   </div>
-    //   <div className="w-[60%] h-[90%] p-10">
-    //     <img className="rounded-4xl h-full  " src={"./food-bike.jpg"} alt="" />
-    //   </div>
-    // </div>
   );
 }
