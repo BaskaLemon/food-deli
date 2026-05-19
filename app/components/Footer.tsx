@@ -1,3 +1,5 @@
+import Link from "next/link";
+
 export default function Footer() {
   return (
     <div className="bg-black w-full h-fit flex flex-col gap-20 items-center">
@@ -9,7 +11,7 @@ export default function Footer() {
         <p>Fresh fast delivered </p>
       </div>
       <div className="text-white w-[70%] flex justify-between">
-        <div className="gap-2.5 items-center">
+        <Link href={"./"} className="gap-2.5 items-center">
           <img className="self-center" src={"./app-logo.svg"} />
           <div>
             <div className="flex text-2xl">
@@ -18,7 +20,7 @@ export default function Footer() {
             </div>
             <p className="text-white">Swift delivery</p>
           </div>
-        </div>
+        </Link>
         <div className="flex gap-40">
           <div className="space-y-2">
             <p className="text-stone-500">NOMNOM</p>
