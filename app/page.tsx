@@ -1,5 +1,3 @@
-import Image from "next/image";
-import Login from "./create/page";
 import Header from "./components/Header";
 import Offer from "./components/Offer";
 import Appetizers from "./components/Appetizers";

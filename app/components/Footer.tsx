@@ -1,3 +1,4 @@
+/* eslint-disable @next/next/no-img-element */
 import Link from "next/link";
 
 export default function Footer() {
@@ -12,7 +13,7 @@ export default function Footer() {
       </div>
       <div className="text-white w-[70%] flex justify-between">
         <Link href={"./"} className="gap-2.5 items-center">
-          <img className="self-center" src={"./app-logo.svg"} />
+          <img className="self-center" src={"./app-logo.svg"} alt="" />
           <div>
             <div className="flex text-2xl">
               <p className="text-white">Nom</p>

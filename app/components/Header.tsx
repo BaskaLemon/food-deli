@@ -1,3 +1,4 @@
+/* eslint-disable @next/next/no-img-element */
 import Link from "next/link";
 
 export default function Header() {
@@ -5,7 +6,7 @@ export default function Header() {
     <div className="bg-black flex justify-center items-center w-full ">
       <div className="flex justify-between p-4 w-[90%]">
         <Link href={"./"} className="flex gap-2.5 items-center">
-          <img src={"./app-logo.svg"} />
+          <img src={"./app-logo.svg"} alt="" />
           <div>
             <div className="flex text-2xl">
               <p className="text-white">Nom</p>

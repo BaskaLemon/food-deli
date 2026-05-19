@@ -1,4 +1,5 @@
-import Image from "next/image";
+/* eslint-disable @next/next/no-img-element */
+
 import Link from "next/link";
 
 export default function Login() {
@@ -10,7 +11,7 @@ export default function Login() {
             href={"/"}
             className="flex w-8 h-8 border border-stone-200 rounded-md justify-center items-center hover:scale-105 transition-transform"
           >
-            <img src={"./Vector.svg"} />
+            <img src={"./Vector.svg"} alt="" />
           </Link>
           <div>
             <p className="text-2xl font-bold ">Create your account</p>
@@ -24,7 +25,7 @@ export default function Login() {
             className="border border-stone-300 rounded-md w-full p-2 "
           />
           <button className="bg-black text-white rounded-md p-2">
-            Let's go
+            Let&apos;s go
           </button>
           <div className="flex gap-3 justify-center">
             <p>Already have an account?</p>
@@ -35,7 +36,7 @@ export default function Login() {
         </div>
       </div>
       <div className="w-[60%] h-[90%] p-10">
-        <img className="rounded-4xl h-full  " src={"./food-bike.jpg"} />
+        <img className="rounded-4xl h-full  " src={"./food-bike.jpg"} alt="" />
       </div>
     </div>
   );
