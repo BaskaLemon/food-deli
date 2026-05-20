@@ -4,14 +4,21 @@ import Link from "next/link";
 export default function Footer() {
   return (
     <div className="bg-black w-full h-fit flex flex-col gap-20 items-center">
-      <div className="bg-red-500 w-screen h-20 mt-20 flex text-white text-4xl items-center justify-center gap-20 overflow-hidden">
-        <p>Fresh fast delivered </p>
-        <p>Fresh fast delivered </p>
-        <p>Fresh fast delivered </p>
-        <p>Fresh fast delivered </p>
-        <p>Fresh fast delivered </p>
+      <div className="bg-red-500 w-screen h-20 mt-20 overflow-hidden">
+        <div className="flex w-max items-center gap-20 text-white text-4xl h-full animate-scroll">
+          <p>Fresh fast delivered</p>
+          <p>Fresh fast delivered</p>
+          <p>Fresh fast delivered</p>
+          <p>Fresh fast delivered</p>
+          <p>Fresh fast delivered</p>
+          <p>Fresh fast delivered</p>
+          <p>Fresh fast delivered</p>
+          <p>Fresh fast delivered</p>
+          <p>Fresh fast delivered</p>
+          <p>Fresh fast delivered</p>
+        </div>
       </div>
-      <div className="text-white w-[70%] flex justify-between">
+      <div className="text-white w-[70%] flex justify-between space-x-8">
         <Link href={"./"} className="gap-2.5 items-center">
           <img className="self-center" src={"./app-logo.svg"} alt="" />
           <div>
