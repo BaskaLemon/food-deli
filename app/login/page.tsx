@@ -25,7 +25,11 @@ export default function Login() {
               placeholder="Enter your email address"
               className="border border-stone-300 rounded-md w-full p-2 "
             />
-
+            <input
+              type="text"
+              placeholder="Password"
+              className="border border-stone-300 rounded-md w-full p-2 "
+            />
             <p className="underline hover:opacity-60">Forgot password?</p>
           </div>
           <button className="bg-black text-white rounded-md p-2">
@@ -33,7 +37,7 @@ export default function Login() {
           </button>
           <div className="flex gap-3 justify-center">
             <p>Don’t have an account?</p>
-            <Link href={"./login"} className="text-blue-400 hover:opacity-60">
+            <Link href={"../create"} className="text-blue-400 hover:opacity-60">
               Sign up
             </Link>
           </div>
