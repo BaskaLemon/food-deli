@@ -11,12 +11,15 @@ export default function Create() {
     email: "",
     username: "",
     password: "",
+    confirmPassword: "",
   });
 
-  const [isValid, setIsValid] = useState(true);
+  const [isEmailValid, setIsEmailValid] = useState(true);
+  const [isPasswordValid, setIsPasswordValid] = useState(true);
+  const [showPassword, setShowPassword] = useState(false);
 
   const nextStep = () => {
-    if (currentStep < 3) {
+    if (currentStep < 2) {
       setCurrentStep((prev) => prev + 1);
     }
   };
@@ -31,9 +34,15 @@ export default function Create() {
     const regex = /^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/;
 
     setFormData({ ...formData, email: value });
-    setIsValid(regex.test(value) || value === "");
+    setIsEmailValid(regex.test(value) || value === "");
   };
 
+  const validatePass = (value: string) => {
+    const regex = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[\W_]).{8,20}$/;
+
+    setFormData({ ...formData, password: value });
+    setIsPasswordValid(regex.test(value) || value === "");
+  };
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({
       ...formData,
@@ -43,7 +52,6 @@ export default function Create() {
 
   return (
     <div className="flex items-center w-screen h-screen">
-      {/* LEFT SIDE */}
       <div className="container w-[40%] flex justify-center">
         <div className="flex flex-col gap-7 w-[50%]">
           <Link
@@ -53,15 +61,15 @@ export default function Create() {
             <img src={"./Vector.svg"} alt="" />
           </Link>
 
-          <div>
-            <p className="text-2xl font-bold">Create your account</p>
-
-            <p className="text-gray-400">Step {currentStep} of 3</p>
-          </div>
-
-          {/* STEP 1 */}
           {currentStep === 1 && (
             <>
+              <div>
+                <p className="text-2xl font-bold">Create your account</p>
+
+                <p className="text-gray-400">
+                  Sign up to explore your favorite dishes.
+                </p>
+              </div>
               <div className="flex flex-col gap-2">
                 <input
                   type="email"
@@ -69,13 +77,13 @@ export default function Create() {
                   value={formData.email}
                   onChange={(e) => validateEmail(e.target.value)}
                   className={`border rounded-md w-full p-2 outline-none ${
-                    isValid
+                    isEmailValid
                       ? "border-stone-300"
                       : "border-red-500 focus:border-red-500"
                   }`}
                 />
 
-                {!isValid && (
+                {!isEmailValid && (
                   <p className="text-red-500 text-sm">
                     Please enter a valid email.
                   </p>
@@ -84,11 +92,11 @@ export default function Create() {
 
               <button
                 onClick={nextStep}
-                disabled={!isValid || formData.email === ""}
+                disabled={!isEmailValid || formData.email === ""}
                 className={`rounded-md p-2 text-white ${
-                  !isValid || formData.email === ""
+                  !isEmailValid || formData.email === ""
                     ? "bg-gray-400 cursor-not-allowed"
-                    : "bg-black"
+                    : "bg-black hover:scale-102 cursor-pointer"
                 }`}
               >
                 Continue
@@ -96,64 +104,86 @@ export default function Create() {
             </>
           )}
 
-          {/* STEP 2 */}
           {currentStep === 2 && (
             <>
-              <input
-                type="text"
-                name="username"
-                placeholder="Enter username"
-                value={formData.username}
-                onChange={handleChange}
-                className="border border-stone-300 rounded-md w-full p-2"
-              />
+              <div>
+                <p className="text-2xl font-bold">Create a strong password</p>
 
-              <div className="flex gap-3">
-                <button
-                  onClick={prevStep}
-                  className="border border-stone-300 rounded-md p-2 w-full"
-                >
-                  Back
-                </button>
-
-                <button
-                  onClick={nextStep}
-                  disabled={formData.username === ""}
-                  className={`rounded-md p-2 text-white w-full ${
-                    formData.username === "" ? "bg-gray-400" : "bg-black"
-                  }`}
-                >
-                  Continue
-                </button>
+                <p className="text-gray-400">
+                  Create a strong password with letters, numbers.
+                </p>
               </div>
-            </>
-          )}
+              <div className="space-y-5">
+                <input
+                  type={showPassword ? "text" : "password"}
+                  name="password"
+                  placeholder="Enter password"
+                  value={formData.password}
+                  onChange={(e) => validatePass(e.target.value)}
+                  className={`border rounded-md w-full p-2 ${
+                    isPasswordValid ? "border-stone-300" : "border-red-500"
+                  }`}
+                />
+                {!isPasswordValid && (
+                  <p className="text-red-500 text-sm">
+                    Password must contain: uppercase, lowercase, number, special
+                    character, and be 8-20 characters long.
+                  </p>
+                )}
 
-          {/* STEP 3 */}
-          {currentStep === 3 && (
-            <>
-              <input
-                type="password"
-                name="password"
-                placeholder="Enter password"
-                value={formData.password}
-                onChange={handleChange}
-                className="border border-stone-300 rounded-md w-full p-2"
-              />
-
+                <input
+                  type={showPassword ? "text" : "password"}
+                  name="confirmPassword"
+                  placeholder="Confirm password"
+                  value={formData.confirmPassword}
+                  onChange={handleChange}
+                  className="border border-stone-300 rounded-md w-full p-2"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="text-sm text-gray-500 flex items-center gap-0.5 hover:text-black"
+                >
+                  {showPassword ? (
+                    <div className="w-4 h-4 border rounded-sm bg-black">
+                      <img src={"./check.svg"} alt="" />
+                    </div>
+                  ) : (
+                    <div className="w-4 h-4 border rounded-sm">
+                      <img src={"./check.svg"} alt="" />
+                    </div>
+                  )}
+                  Show password
+                </button>
+                {formData.confirmPassword !== "" &&
+                  formData.password !== formData.confirmPassword && (
+                    <p className="text-red-500 text-sm">
+                      Passwords do not match
+                    </p>
+                  )}
+              </div>
               <div className="flex gap-3">
                 <button
+                  type="button"
                   onClick={prevStep}
-                  className="border border-stone-300 rounded-md p-2 w-full"
+                  className="border border-stone-300 rounded-md p-2 w-full hover:scale-102 cursor-pointer"
                 >
                   Back
                 </button>
 
                 <button
-                  onClick={() => console.log(formData)}
-                  disabled={formData.password === ""}
+                  type="submit"
+                  disabled={
+                    formData.password === "" ||
+                    formData.confirmPassword === "" ||
+                    formData.password !== formData.confirmPassword
+                  }
                   className={`rounded-md p-2 text-white w-full ${
-                    formData.password === "" ? "bg-gray-400" : "bg-green-600"
+                    formData.password === "" ||
+                    formData.confirmPassword === "" ||
+                    formData.password !== formData.confirmPassword
+                      ? "bg-gray-400 cursor-not-allowed"
+                      : "bg-green-600 hover:scale-102 cursor-pointer"
                   }`}
                 >
                   Submit
@@ -171,8 +201,6 @@ export default function Create() {
           </div>
         </div>
       </div>
-
-      {/* RIGHT SIDE */}
       <div className="w-[60%] h-[90%] p-10">
         <img
           className="rounded-4xl h-full w-full object-cover"
