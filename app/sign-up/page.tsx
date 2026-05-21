@@ -6,7 +6,7 @@ import { useRouter } from "next/navigation";
 
 import { useState } from "react";
 
-export default function Create() {
+export default function SignUp() {
   const [currentStep, setCurrentStep] = useState(1);
   const [loading, setLoading] = useState(false);
   const router = useRouter();

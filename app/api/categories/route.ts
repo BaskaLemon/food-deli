@@ -1,8 +1,34 @@
-import { neon } from "@neondatabase/serverless";
-
-const sql = neon(process.env.DATABASE_URL!);
-
+import { prisma } from "@/lib/prisma";
 export async function GET() {
-  const cats = await sql`SELECT * FROM categories ORDER BY id`;
-  return Response.json(cats);
+  try {
+    const categories = await prisma.categories.findMany({
+      orderBy: { id: "asc" },
+    });
+
+    return Response.json(categories);
+  } catch (error) {
+    console.error(error);
+    return Response.json(
+      { error: "Failed to fetch categories" },
+      { status: 500 },
+    );
+  }
+}
+export async function POST(req: Request) {
+  try {
+    const body = await req.json();
+
+    const categories = await prisma.categories.createMany({
+      data: body,
+      skipDuplicates: true,
+    });
+
+    return Response.json(categories);
+  } catch (error) {
+    console.error(error);
+    return Response.json(
+      { error: "Failed to create categories" },
+      { status: 500 },
+    );
+  }
 }

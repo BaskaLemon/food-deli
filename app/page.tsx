@@ -8,8 +8,8 @@ import MainDishes from "./components/MainDishes";
 
 export default function Home() {
   return (
-    <div className="flex flex-col justify-center items-center gap-22  w-fit h-fit bg-neutral-600">
-      <div>
+    <div className="flex flex-col justify-center items-center gap-22  w-screen h-fit bg-neutral-600">
+      <div className="w-full">
         <Header />
         <Offer />
       </div>
