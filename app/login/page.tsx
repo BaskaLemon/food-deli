@@ -2,6 +2,7 @@
 "use client";
 
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 
 export default function Login() {
@@ -9,44 +10,47 @@ export default function Login() {
     email: "",
     password: "",
   });
-
+  const [loading, setLoading] = useState(false);
+  const router = useRouter();
+  const [error, setError] = useState("");
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData((prev) => ({
       ...prev,
       [e.target.name]: e.target.value,
     }));
   };
-
-  const handleLogin = async (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    try {
-      const res = await fetch("/api/auth/login", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(formData),
-      });
+    setLoading(true);
+    setError("");
 
-      const data = await res.json();
+    const res = await fetch("/api/auth/sign-in", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        email: formData.email,
+        password: formData.password,
+      }),
+    });
 
-      if (!res.ok) {
-        alert(data.message || "Login failed");
-        return;
-      }
+    const data = await res.json();
 
-      alert("Login successful");
-      console.log(data);
-    } catch (error) {
-      console.log(error);
+    setLoading(false);
+
+    if (res.ok) {
+      localStorage.setItem("token", data.token);
+      localStorage.setItem("user", JSON.stringify(data.user));
+      router.push("/");
+    } else {
+      setError(data.error);
     }
   };
 
   return (
     <div className="flex items-center w-screen h-screen">
       <div className="container w-[40%] flex justify-center">
-        <form onSubmit={handleLogin} className="flex flex-col gap-7 w-[50%]">
+        <form onSubmit={handleSubmit} className="flex flex-col gap-7 w-[50%]">
           <Link
             href="/"
             className="flex w-8 h-8 border border-stone-200 rounded-md justify-center items-center hover:scale-105 transition-transform"
@@ -81,6 +85,7 @@ export default function Login() {
               className="border border-stone-300 rounded-md w-full p-2"
               required
             />
+            {error && <p className="text-red-500 text-sm">{error}</p>}
 
             <p className="underline hover:opacity-60 cursor-pointer">
               Forgot password?
@@ -89,9 +94,10 @@ export default function Login() {
 
           <button
             type="submit"
-            className="bg-black text-white rounded-md p-2 hover:opacity-90"
+            disabled={loading}
+            className="bg-black text-white rounded-md p-2 hover:opacity-90 disabled:opacity-50"
           >
-            Let&apos;s go
+            {loading ? "Loading..." : "Let's go"}
           </button>
 
           <div className="flex gap-3 justify-center">

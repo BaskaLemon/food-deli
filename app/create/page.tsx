@@ -2,11 +2,14 @@
 /* eslint-disable @next/next/no-img-element */
 
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+
 import { useState } from "react";
 
 export default function Create() {
   const [currentStep, setCurrentStep] = useState(1);
-
+  const [loading, setLoading] = useState(false);
+  const router = useRouter();
   const [formData, setFormData] = useState({
     email: "",
     username: "",
@@ -49,7 +52,27 @@ export default function Create() {
       [e.target.name]: e.target.value,
     });
   };
+  const handleSubmit = async () => {
+    setLoading(true);
+    const res = await fetch("/api/auth/sign-up", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        email: formData.email,
+        password: formData.password,
+      }),
+    });
+    const data = await res.json();
+    setLoading(false);
 
+    if (res.ok) {
+      localStorage.setItem("token", data.token);
+      localStorage.setItem("user", JSON.stringify(data.user));
+      router.push("/sign-in");
+    } else {
+      alert(data.error || "Алдаа гарлаа");
+    }
+  };
   return (
     <div className="flex items-center w-screen h-screen">
       <div className="container w-[40%] flex justify-center">
@@ -172,7 +195,8 @@ export default function Create() {
                 </button>
 
                 <button
-                  type="submit"
+                  type="button"
+                  onClick={handleSubmit}
                   disabled={
                     formData.password === "" ||
                     formData.confirmPassword === "" ||
@@ -186,7 +210,7 @@ export default function Create() {
                       : "bg-green-600 hover:scale-102 cursor-pointer"
                   }`}
                 >
-                  Submit
+                  {loading ? "Loading..." : "Submit"}
                 </button>
               </div>
             </>
