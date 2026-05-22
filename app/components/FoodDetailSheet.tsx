@@ -43,19 +43,15 @@ export default function FoodDetailSheet({ dish, onClose }: Props) {
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center px-4"
-      style={{
-        backgroundColor: "rgba(0,0,0,0.55)",
-        backdropFilter: "blur(6px)",
-      }}
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/55 backdrop-blur-sm px-4"
       onClick={onClose}
     >
       <div
-        className="bg-white rounded-3xl overflow-hidden flex shadow-2xl"
-        style={{ width: 640, maxWidth: "95vw", height: 340 }}
+        className="bg-white rounded-4xl overflow-hidden flex shadow-2xl w-160 max-w-[95vw] h-85"
         onClick={(e) => e.stopPropagation()}
       >
-        <div className="relative shrink-0" style={{ width: 260 }}>
+        {/* Image */}
+        <div className="relative shrink-0 w-65">
           <img
             src={dish.image}
             alt={dish.name}
@@ -63,56 +59,67 @@ export default function FoodDetailSheet({ dish, onClose }: Props) {
           />
         </div>
 
+        {/* Content */}
         <div className="flex-1 flex flex-col px-7 py-6 relative">
+          {/* Close button */}
           <button
             onClick={onClose}
-            className="absolute top-4 right-4 w-7 h-7 rounded-full bg-gray-100 hover:bg-gray-200 flex items-center justify-center text-gray-500 transition-colors text-base font-bold leading-none"
+            className="absolute top-4 right-4 w-8 h-8 rounded-full bg-gray-100 hover:bg-gray-200 flex items-center justify-center text-gray-500 hover:text-black transition-all text-lg font-bold"
           >
             ×
           </button>
 
-          <h2 className="text-xl font-bold text-[#E74C3C] pr-8 leading-snug">
+          {/* Title */}
+          <h2 className="text-[28px] font-extrabold text-[#E74C3C] pr-10 leading-tight">
             {dish.name}
           </h2>
 
-          <p className="text-gray-400 text-sm mt-2 leading-relaxed line-clamp-3">
+          {/* Description */}
+          <p className="text-gray-400 text-sm mt-3 leading-relaxed line-clamp-4">
             {dish.description}
           </p>
 
           <div className="flex-1" />
 
-          <div className="flex items-end justify-between mb-4">
-            <div>
-              <p className="text-xs text-gray-400 mb-0.5">Total price</p>
-              <p className="text-2xl font-extrabold text-gray-900">
+          {/* Bottom section */}
+          <div className="flex items-end justify-between mb-5">
+            {/* Price */}
+            <div className="flex flex-col gap-1">
+              <p className="text-xs uppercase tracking-wide text-gray-400">
+                Total price
+              </p>
+
+              <p className="text-3xl font-extrabold text-gray-900">
                 ${(Number(dish.price) * qty).toFixed(2)}
               </p>
             </div>
 
-            <div className="flex items-center gap-2">
+            {/* Quantity */}
+            <div className="flex items-center gap-4 bg-gray-100 rounded-full px-4 py-2">
               <button
                 onClick={() => setQty((q) => Math.max(1, q - 1))}
-                className="w-7 h-7 flex items-center justify-center text-[#E74C3C] hover:opacity-70 transition-opacity"
-                style={{ fontSize: 20 }}
+                className="text-[#E74C3C] text-2xl font-bold hover:scale-110 transition-transform"
               >
-                ‹
+                −
               </button>
-              <span className="font-bold text-base w-5 text-center text-gray-900">
+
+              <span className="font-bold text-lg text-gray-900 min-w-5 text-center">
                 {qty}
               </span>
+
               <button
                 onClick={() => setQty((q) => q + 1)}
-                className="w-7 h-7 flex items-center justify-center text-[#E74C3C] hover:opacity-70 transition-opacity"
-                style={{ fontSize: 20 }}
+                className="text-[#E74C3C] text-2xl font-bold hover:scale-110 transition-transform"
               >
-                ›
+                +
               </button>
             </div>
           </div>
 
+          {/* Add button */}
           <button
             onClick={handleAdd}
-            className="w-full bg-gray-900 hover:bg-gray-700 active:scale-[0.98] text-white py-3 rounded-2xl font-bold text-sm tracking-wide transition-all"
+            className="w-full bg-gray-900 hover:bg-[#E74C3C] active:scale-[0.98] text-white py-3 rounded-2xl font-bold text-sm tracking-wide transition-all duration-200"
           >
             Add to cart
           </button>

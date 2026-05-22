@@ -1,4 +1,5 @@
 import { prisma } from "@/lib/prisma";
+
 export async function GET() {
   try {
     const categories = await prisma.categories.findMany({
@@ -14,6 +15,7 @@ export async function GET() {
     );
   }
 }
+
 export async function POST(req: Request) {
   try {
     const body = await req.json();
