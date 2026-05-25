@@ -103,7 +103,7 @@ export default function SignIn() {
           <div className="flex gap-3 justify-center">
             <p>Don’t have an account?</p>
 
-            <Link href="/create" className="text-blue-400 hover:opacity-60">
+            <Link href="/sign-up" className="text-blue-400 hover:opacity-60">
               Sign up
             </Link>
           </div>

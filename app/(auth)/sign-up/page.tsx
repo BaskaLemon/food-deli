@@ -219,7 +219,10 @@ export default function SignUp() {
           <div className="flex gap-3 justify-center">
             <p>Already have an account?</p>
 
-            <Link href={"../login"} className="text-blue-400 hover:opacity-60">
+            <Link
+              href={"../sign-in"}
+              className="text-blue-400 hover:opacity-60"
+            >
               Log in
             </Link>
           </div>
