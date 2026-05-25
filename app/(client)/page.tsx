@@ -12,15 +12,10 @@ export default function Home() {
       </div>
       <div className="container flex flex-col items-center gap-13.5">
         <DishSection title="Appetizers" categoryId={1} />
-        <DishSection title="Salads" categoryId={2} />
-        <DishSection title="Pizzas" categoryId={3} />
         <DishSection title="Lunch Favorites" categoryId={4} />
         <DishSection title="Main Dishes" categoryId={5} />
-        <DishSection title="Side Dish" categoryId={6} />
-        <DishSection title="Brunch" categoryId={7} />
         <DishSection title="Desserts" categoryId={8} />
         <DishSection title="Beverages" categoryId={9} />
-        <DishSection title="Fish & Sea Foods" categoryId={10} />
       </div>
       <Footer />
     </div>

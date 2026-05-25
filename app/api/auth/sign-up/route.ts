@@ -13,7 +13,7 @@ export async function POST(req: Request) {
 
     if (existing) {
       return NextResponse.json(
-        { error: "Имэйл бүртгэлтэй байна" },
+        { error: "Email already exists" },
         { status: 400 },
       );
     }

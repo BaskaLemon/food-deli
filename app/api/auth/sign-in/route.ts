@@ -12,13 +12,13 @@ export async function POST(req: Request) {
     });
 
     if (!user) {
-      return Response.json({ error: "Имэйл олдсонгүй" }, { status: 404 });
+      return Response.json({ error: "Email not found" }, { status: 404 });
     }
 
     const valid = await comparePassword(password, user.password);
 
     if (!valid) {
-      return Response.json({ error: "Нууц үг буруу" }, { status: 401 });
+      return Response.json({ error: "Wrong password" }, { status: 401 });
     }
 
     const token = signToken({

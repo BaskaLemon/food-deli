@@ -87,9 +87,12 @@ export default function SignIn() {
             />
             {error && <p className="text-red-500 text-sm">{error}</p>}
 
-            <p className="underline hover:opacity-60 cursor-pointer">
+            <Link
+              href={`/forgotPass`}
+              className="underline hover:opacity-60 cursor-pointer"
+            >
               Forgot password?
-            </p>
+            </Link>
           </div>
 
           <button

@@ -64,14 +64,14 @@ export default function Footer() {
               href={`/category/4`}
               className="hover:text-red-500 transition-colors"
             >
-              Main dishes
+              Lunch Favorites
             </Link>
 
             <Link
               href={`/category/5`}
               className="hover:text-red-500 transition-colors"
             >
-              Desserts
+              Main dishes
             </Link>
           </div>
 
