@@ -20,7 +20,7 @@ export default function Footer() {
       </div>
       <div className="text-white w-[70%] flex justify-between space-x-8">
         <Link href={"./"} className="gap-2.5 items-center">
-          <img className="self-center" src={"./app-logo.svg"} alt="" />
+          <img className="self-center" src="/app-logo.svg" alt="" />
           <div>
             <div className="flex text-2xl">
               <p className="text-white">Nom</p>
@@ -116,8 +116,8 @@ export default function Footer() {
           <div className="space-y-2">
             <p className="text-stone-500">FOLLOW US</p>
             <div className="flex gap-5">
-              <img className="w-8 h-8" src={"./fb-logo.png"} alt="" />
-              <img className="w-8 h-8" src={"./ig-logo.png"} alt="" />
+              <img className="w-8 h-8" src="/fb-logo.png" alt="" />
+              <img className="w-8 h-8" src="/ig-logo.png" alt="" />
             </div>
           </div>
         </div>

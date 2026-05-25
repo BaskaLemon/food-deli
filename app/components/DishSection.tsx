@@ -1,6 +1,7 @@
 "use client";
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import DishSectionSkeleton from "./DishSectionSkeleton";
 
 /* eslint-disable @next/next/no-img-element */
 type Dish = {
@@ -18,6 +19,7 @@ type Props = {
 
 export default function DishSection({ title, categoryId }: Props) {
   const [dishes, setDishes] = useState<Dish[]>([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     fetch(`/api/dishes?category_id=${categoryId}`)
@@ -30,9 +32,10 @@ export default function DishSection({ title, categoryId }: Props) {
         } else {
           setDishes([]);
         }
+        setLoading(false);
       });
   }, [categoryId]);
-
+  if (loading) return <DishSectionSkeleton />;
   if (dishes.length === 0) return null;
 
   return (
@@ -58,13 +61,13 @@ export default function DishSection({ title, categoryId }: Props) {
             key={dish.id}
             className="group bg-white rounded-[30px] p-5 flex flex-col gap-5 shadow-lg hover:scale-[1.02] transition-all duration-300"
           >
-            <div className="overflow-hidden rounded-3xl">
+            <div className=" relative overflow-hidden rounded-3xl">
               <img
                 src={dish.image_url || "https://placehold.co/600x400"}
                 alt={dish.name}
                 className="w-full h-87.5 object-cover group-hover:scale-105 transition-transform duration-300"
               />
-              <button className="mt-auto bg-white text-white py-3 rounded-xl font-semibold hover:bg-[#ff5c47] transition-colors duration-200">
+              <button className="absolute bottom-3 right-3 w-10 h-10 rounded-full flex items-center justify-center  mt-auto bg-white text-black py-3 text-2xl font-bold z-10 hover:bg-[#ff5c47] transition-colors duration-200 ">
                 +
               </button>
             </div>

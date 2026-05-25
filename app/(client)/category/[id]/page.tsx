@@ -6,6 +6,7 @@ import { useParams } from "next/navigation";
 import { addToCart } from "@/lib/cart";
 import Header from "@/app/components/Header";
 import Footer from "@/app/components/Footer";
+import CategoryPageSkeleton from "@/app/components/CategoryPageSkeleton";
 type Dish = {
   id: string;
   name: string;
@@ -19,22 +20,20 @@ export default function CategoryPage() {
   const [dishes, setDishes] = useState<Dish[]>([]);
   const [catName, setCatName] = useState("");
   const [selected, setSelected] = useState<Dish | null>(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch(`/api/dishes?category_id=${id}`)
-      .then((res) => res.json())
-      .then((data) => {
-        setDishes(data);
-      });
-
-    fetch("/api/categories")
-      .then((res) => res.json())
-      .then((data) => {
-        const cat = data.find((c: any) => c.id === Number(id));
-        if (cat) setCatName(cat.name);
-      });
+    Promise.all([
+      fetch(`/api/dishes?category_id=${id}`).then((res) => res.json()),
+      fetch("/api/categories").then((res) => res.json()),
+    ]).then(([dishesData, catsData]) => {
+      setDishes(dishesData);
+      const cat = catsData.find((c: any) => c.id === Number(id));
+      if (cat) setCatName(cat.name);
+      setLoading(false);
+    });
   }, [id]);
-
+  if (loading) return <CategoryPageSkeleton />;
   return (
     <div className="min-h-screen bg-neutral-600 space-y-20  ">
       <Header />
@@ -73,7 +72,7 @@ export default function CategoryPage() {
                       image_url: dish.image_url,
                     });
                   }}
-                  className="absolute bottom-3 right-3 bg-white w-10 h-10 rounded-full flex items-center justify-center shadow-lg hover:scale-110 active:scale-95 transition-all"
+                  className="absolute bottom-3 right-3 bg-white w-10 h-10 rounded-full flex items-center justify-center shadow-lg hover:bg-[#ff5c47] transition-colors duration-200"
                 >
                   <span className="text-black text-2xl font-bold">+</span>
                 </button>
