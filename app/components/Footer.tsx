@@ -36,23 +36,82 @@ export default function Footer() {
             <p>Contact us</p>
             <p>Delivery zone</p>
           </div>
-          <div className="flex gap-40">
-            <div className="space-y-2">
-              <p className="text-stone-500">MENU</p>
-              <p>Appetizers</p>
-              <p>Salads</p>
-              <p>Pizzas</p>
-              <p>Main dishes</p>
-              <p>Desserts</p>
-            </div>
-            <div className="space-y-2">
-              <p className="text-black">BOO</p>
-              <p>Side dish</p>
-              <p>Brunch</p>
-              <p>Desserts</p>
-              <p>Beverages</p>
-              <p>Fish and Sea food</p>
-            </div>
+          <div className="space-y-2 flex flex-col">
+            <p className="text-stone-500">MENU</p>
+
+            <Link
+              href={`/category/1`}
+              className="hover:text-red-500 transition-colors"
+            >
+              Appetizers
+            </Link>
+
+            <Link
+              href={`/category/2`}
+              className="hover:text-red-500 transition-colors"
+            >
+              Salads
+            </Link>
+
+            <Link
+              href={`/category/3`}
+              className="hover:text-red-500 transition-colors"
+            >
+              Pizzas
+            </Link>
+
+            <Link
+              href={`/category/4`}
+              className="hover:text-red-500 transition-colors"
+            >
+              Main dishes
+            </Link>
+
+            <Link
+              href={`/category/5`}
+              className="hover:text-red-500 transition-colors"
+            >
+              Desserts
+            </Link>
+          </div>
+
+          <div className="space-y-2 flex flex-col">
+            <p className="text-black">BOO</p>
+
+            <Link
+              href={`/category/6`}
+              className="hover:text-red-500 transition-colors"
+            >
+              Side dish
+            </Link>
+
+            <Link
+              href={`/category/7`}
+              className="hover:text-red-500 transition-colors"
+            >
+              Brunch
+            </Link>
+
+            <Link
+              href={`/category/8`}
+              className="hover:text-red-500 transition-colors"
+            >
+              Desserts
+            </Link>
+
+            <Link
+              href={`/category/9`}
+              className="hover:text-red-500 transition-colors"
+            >
+              Beverages
+            </Link>
+
+            <Link
+              href={`/category/10`}
+              className="hover:text-red-500 transition-colors"
+            >
+              Fish and Sea food
+            </Link>
           </div>
           <div className="space-y-2">
             <p className="text-stone-500">FOLLOW US</p>
@@ -66,7 +125,7 @@ export default function Footer() {
       <div className="flex text-stone-500 w-[70%] gap-15 border-t border-stone-500 py-10">
         <p>Copy right 2024 © Nomnom LLC</p>
         <p>Privacy policy </p>
-        <p>Terms and conditoin</p>
+        <p>Terms and condition</p>
         <p>Cookie policy</p>
       </div>
     </div>

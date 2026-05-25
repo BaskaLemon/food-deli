@@ -1,8 +1,7 @@
-import Header from "./components/Header";
-import Offer from "./components/Offer";
-import Footer from "./components/Footer";
-import DishSection from "./components/DishSection";
-import FoodDetailSheet from "./components/FoodDetailSheet";
+import Header from "../components/Header";
+import Offer from "../components/Offer";
+import Footer from "../components/Footer";
+import DishSection from "../components/DishSection";
 
 export default function Home() {
   return (
@@ -23,7 +22,6 @@ export default function Home() {
         <DishSection title="Beverages" categoryId={9} />
         <DishSection title="Fish & Sea Foods" categoryId={10} />
       </div>
-      <FoodDetailSheet />
       <Footer />
     </div>
   );
