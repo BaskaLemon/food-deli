@@ -15,7 +15,7 @@ export default function ForgotPassword() {
     setLoading(true);
     setError("");
 
-    const res = await fetch("/api/auth/forgot-password", {
+    const res = await fetch("/api/auth/forgotPass", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ email }),
@@ -42,15 +42,15 @@ export default function ForgotPassword() {
             <div>
               <p className="text-2xl font-bold">Check your email</p>
               <p className="text-gray-400 mt-1">
-                We sent a password reset link to
-                <span className="text-black font-medium">{email}</span>
+                We sent a password reset link to:
+                <span className="text-black font-medium"> {email}</span>
               </p>
             </div>
             <p className="text-sm text-gray-400">
               Didn&apos;t receive it?
               <button
                 onClick={() => setSuccess(false)}
-                className="text-black underline hover:opacity-70"
+                className="text-black underline ml-2 hover:opacity-70"
               >
                 Try again
               </button>

@@ -13,6 +13,7 @@ function ResetPasswordForm() {
   const [success, setSuccess] = useState(false);
   const router = useRouter();
   const searchParams = useSearchParams();
+  const [showPassword, setShowPassword] = useState(false);
   const token = searchParams.get("token");
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -26,7 +27,7 @@ function ResetPasswordForm() {
     setLoading(true);
     setError("");
 
-    const res = await fetch("/api/auth/reset-password", {
+    const res = await fetch("/api/auth/resetPass", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ token, password }),
@@ -37,7 +38,7 @@ function ResetPasswordForm() {
 
     if (res.ok) {
       setSuccess(true);
-      setTimeout(() => router.push("/login"), 2000);
+      setTimeout(() => router.push("/sign-in"), 2000);
     } else {
       setError(data.error);
     }
@@ -45,10 +46,10 @@ function ResetPasswordForm() {
 
   if (!token) {
     return (
-      <div className="flex flex-col gap-4 w-[50%]">
+      <div className="flex flex-col gap-4 w-screen h-screen justify-center items-center">
         <p className="text-2xl font-bold">Invalid link</p>
         <p className="text-gray-400">This reset link is invalid or expired.</p>
-        <Link href="/forgot-password" className="text-black underline">
+        <Link href="/forgotPass" className="text-black underline">
           Request a new one
         </Link>
       </div>
@@ -81,7 +82,7 @@ function ResetPasswordForm() {
 
             <div className="flex flex-col gap-4">
               <input
-                type="password"
+                type={showPassword ? "text" : "password"}
                 placeholder="New password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
@@ -90,7 +91,7 @@ function ResetPasswordForm() {
                 minLength={6}
               />
               <input
-                type="password"
+                type={showPassword ? "text" : "password"}
                 placeholder="Confirm new password"
                 value={confirm}
                 onChange={(e) => setConfirm(e.target.value)}
@@ -99,7 +100,22 @@ function ResetPasswordForm() {
                 minLength={6}
               />
             </div>
-
+            <button
+              type="button"
+              onClick={() => setShowPassword(!showPassword)}
+              className="text-sm text-gray-500 flex items-center gap-0.5 hover:text-black"
+            >
+              {showPassword ? (
+                <div className="w-4 h-4 border rounded-sm bg-black">
+                  <img src={"./check.svg"} alt="" />
+                </div>
+              ) : (
+                <div className="w-4 h-4 border rounded-sm">
+                  <img src={"./check.svg"} alt="" />
+                </div>
+              )}
+              Show password
+            </button>
             <button
               type="submit"
               disabled={loading}
