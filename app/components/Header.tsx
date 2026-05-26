@@ -74,9 +74,9 @@ export default function Header() {
               </svg>
               <span>
                 <span className="text-red-500 font-medium">
-                  Delivery address:
+                  Delivery address
                 </span>
-                Add Location
+                : Add Location
               </span>
               <svg
                 className="w-4 h-4 text-black"

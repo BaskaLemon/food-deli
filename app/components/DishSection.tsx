@@ -2,6 +2,8 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import DishSectionSkeleton from "./DishSectionSkeleton";
+import { useAlertStore } from "@/lib/alertStore";
+import { addToCart } from "@/lib/cart";
 
 /* eslint-disable @next/next/no-img-element */
 type Dish = {
@@ -20,6 +22,7 @@ type Props = {
 export default function DishSection({ title, categoryId }: Props) {
   const [dishes, setDishes] = useState<Dish[]>([]);
   const [loading, setLoading] = useState(true);
+  const trigger = useAlertStore((s) => s.trigger);
 
   useEffect(() => {
     fetch(`/api/dishes?category_id=${categoryId}`)
@@ -67,7 +70,18 @@ export default function DishSection({ title, categoryId }: Props) {
                 alt={dish.name}
                 className="w-full h-87.5 object-cover group-hover:scale-105 transition-transform duration-300"
               />
-              <button className="absolute bottom-3 right-3 w-10 h-10 rounded-full flex items-center justify-center  mt-auto bg-white text-black py-3 text-2xl font-bold z-10 hover:bg-[#ff5c47] transition-colors duration-200 ">
+              <button
+                onClick={() => {
+                  addToCart({
+                    id: dish.id,
+                    name: dish.name,
+                    price: Number(dish.price),
+                    image_url: dish.image_url,
+                  });
+                  trigger();
+                }}
+                className="absolute bottom-3 right-3 w-10 h-10 rounded-full flex items-center justify-center  mt-auto bg-white text-black py-3 text-2xl font-bold z-10 hover:bg-[#ff5c47] transition-colors duration-200 "
+              >
                 +
               </button>
             </div>
