@@ -11,5 +11,10 @@ export const comparePassword = (password: string, hash: string) =>
 export const signToken = (payload: { id: string; role: string }) =>
   jwt.sign(payload, SECRET, { expiresIn: "7d" });
 
-export const verifyToken = (token: string) =>
-  jwt.verify(token, SECRET) as { id: string; role: string };
+export const verifyToken = (token: string) => {
+  try {
+    return jwt.verify(token, SECRET) as { id: string; role: string };
+  } catch {
+    return null;
+  }
+};
