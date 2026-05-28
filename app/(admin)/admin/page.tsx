@@ -1,5 +1,7 @@
 /* eslint-disable react-hooks/set-state-in-effect */
 "use client";
+
+import Link from "next/link";
 import { useEffect, useState } from "react";
 
 /* eslint-disable @next/next/no-img-element */
@@ -104,15 +106,14 @@ export default function OrdersPage() {
     <div className="flex min-h-screen bg-white">
       {/* Sidebar */}
       <aside className="w-44 border-r border-gray-100 flex flex-col gap-2 p-4 pt-6">
-        <div className="flex items-center gap-2 mb-8">
-          <div className="w-8 h-8 bg-red-500 rounded-full flex items-center justify-center">
-            <span className="text-white text-xs font-bold">N</span>
-          </div>
+        <Link href="/" className="flex items-center gap-2 mb-8">
+          <img src="/app-logo.svg" alt="" />
+
           <div>
             <p className="font-black text-sm">NomNom</p>
             <p className="text-xs text-gray-400">Swift delivery</p>
           </div>
-        </div>
+        </Link>
         <button className="flex items-center gap-2 text-sm text-gray-500 px-3 py-2 rounded-lg hover:bg-gray-50">
           <span>⊞</span> Food menu
         </button>

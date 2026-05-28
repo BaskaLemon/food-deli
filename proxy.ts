@@ -13,7 +13,7 @@ export function proxy(req: NextRequest) {
     if (payload.role !== "ADMIN") {
       return NextResponse.redirect(new URL("/", req.url));
     }
-  } catch {
+  } catch (e) {
     return NextResponse.redirect(new URL("/sign-in", req.url));
   }
 

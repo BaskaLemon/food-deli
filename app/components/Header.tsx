@@ -4,6 +4,8 @@
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
+import { DeleteIcon } from "lucide-react";
+import DeliveryAddressModal from "./DeliveryAddressModal";
 
 type User = {
   email: string;
@@ -64,34 +66,7 @@ export default function Header() {
 
         {user ? (
           <div className="flex gap-4 items-center">
-            <button className="flex items-center gap-2 border bg-white rounded-full px-4 py-2  text-sm hover:bg-gray-200 transition-colors">
-              <svg
-                className="w-4 h-4 text-red-500"
-                fill="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z" />
-              </svg>
-              <span>
-                <span className="text-red-500 font-medium">
-                  Delivery address
-                </span>
-                : Add Location
-              </span>
-              <svg
-                className="w-4 h-4 text-black"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M9 5l7 7-7 7"
-                />
-              </svg>
-            </button>
+            <DeliveryAddressModal />
 
             <Link
               href="/cart"
