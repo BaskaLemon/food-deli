@@ -4,7 +4,6 @@
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
-import { DeleteIcon } from "lucide-react";
 import DeliveryAddressModal from "./DeliveryAddressModal";
 
 type User = {

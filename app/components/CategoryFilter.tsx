@@ -42,14 +42,10 @@ export default function CategoryFilter() {
 
   return (
     <div className="w-full px-10 py-8">
-      {/* Section label */}
       <p className="text-white/50 text-xs font-semibold uppercase tracking-widest mb-4 text-center">
         Browse by category
       </p>
-
-      {/* Scrollable row */}
       <div className="flex items-center gap-3 overflow-x-auto pb-2 scrollbar-hide justify-center flex-wrap">
-        {/* All button */}
         <button
           onClick={() => handleSelect(null)}
           className={`shrink-0 flex flex-col items-center gap-1.5 px-5 py-3 rounded-2xl text-sm font-semibold transition-all duration-200 ${
@@ -61,8 +57,6 @@ export default function CategoryFilter() {
           <span className="text-2xl">🍽️</span>
           <span className="text-xs">All</span>
         </button>
-
-        {/* Divider */}
         <div className="w-px h-10 bg-white/20 shrink-0" />
 
         {categories.map((cat) => (
@@ -80,8 +74,6 @@ export default function CategoryFilter() {
           </button>
         ))}
       </div>
-
-      {/* Active indicator */}
       {selected !== null && (
         <p className="text-center text-white/40 text-xs mt-4">
           Showing{" "}

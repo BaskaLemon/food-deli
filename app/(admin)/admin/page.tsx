@@ -104,7 +104,6 @@ export default function OrdersPage() {
 
   return (
     <div className="flex min-h-screen bg-white">
-      {/* Sidebar */}
       <aside className="w-44 border-r border-gray-100 flex flex-col gap-2 p-4 pt-6">
         <Link href="/" className="flex items-center gap-2 mb-8">
           <img src="/app-logo.svg" alt="" />
@@ -114,17 +113,17 @@ export default function OrdersPage() {
             <p className="text-xs text-gray-400">Swift delivery</p>
           </div>
         </Link>
-        <button className="flex items-center gap-2 text-sm text-gray-500 px-3 py-2 rounded-lg hover:bg-gray-50">
+        <Link
+          href={"/food-menu"}
+          className="flex items-center gap-2 text-sm text-gray-500 px-3 py-2 rounded-lg hover:bg-gray-50"
+        >
           <span>⊞</span> Food menu
-        </button>
+        </Link>
         <button className="flex items-center gap-2 text-sm text-white px-3 py-2 rounded-lg bg-gray-900 font-medium">
           <span>🚚</span> Orders
         </button>
       </aside>
-
-      {/* Main */}
       <main className="flex-1 p-8">
-        {/* Header */}
         <div className="flex items-center justify-between mb-6">
           <div>
             <h1 className="text-2xl font-black">Orders</h1>
@@ -149,8 +148,6 @@ export default function OrdersPage() {
             </button>
           </div>
         </div>
-
-        {/* Table */}
         <div className="border border-gray-100 rounded-2xl overflow-hidden">
           <table className="w-full text-sm">
             <thead>
@@ -206,8 +203,6 @@ export default function OrdersPage() {
                       <td className="p-4 text-gray-700">
                         {order.users?.email ?? "Unknown"}
                       </td>
-
-                      {/* Food column */}
                       <td className="p-4 relative">
                         <button
                           onClick={() =>
@@ -254,8 +249,6 @@ export default function OrdersPage() {
                       <td className="p-4 font-semibold">
                         ${Number(order.total_price).toFixed(2)}
                       </td>
-
-                      {/* Status */}
                       <td className="p-4">
                         <div
                           className={`flex items-center gap-1 px-3 py-1 rounded-full text-sm font-medium w-fit ${
@@ -283,8 +276,6 @@ export default function OrdersPage() {
             </tbody>
           </table>
         </div>
-
-        {/* Pagination */}
         <div className="flex justify-end items-center gap-2 mt-6">
           <button
             onClick={() => setPage((p) => Math.max(1, p - 1))}
@@ -326,11 +317,6 @@ export default function OrdersPage() {
           </button>
         </div>
       </main>
-
-      {/* Avatar */}
-      <div className="absolute top-4 right-6">
-        <div className="w-10 h-10 rounded-full bg-linear-to-br from-purple-400 to-blue-500" />
-      </div>
     </div>
   );
 }
