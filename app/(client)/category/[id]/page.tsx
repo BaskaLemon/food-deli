@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @next/next/no-img-element */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
@@ -7,6 +8,9 @@ import { addToCart } from "@/lib/cart";
 import Header from "@/app/components/Header";
 import Footer from "@/app/components/Footer";
 import CategoryPageSkeleton from "@/app/components/CategoryPageSkeleton";
+import { useAlertStore } from "@/lib/alertStore";
+import { Alert, AlertTitle } from "@/components/ui/alert";
+import { CheckCircle2Icon } from "lucide-react";
 type Dish = {
   id: string;
   name: string;
@@ -21,6 +25,8 @@ export default function CategoryPage() {
   const [catName, setCatName] = useState("");
   const [selected, setSelected] = useState<Dish | null>(null);
   const [loading, setLoading] = useState(true);
+  const trigger = useAlertStore((s) => s.trigger);
+  const show = useAlertStore((s) => s.show);
 
   useEffect(() => {
     Promise.all([
@@ -37,7 +43,14 @@ export default function CategoryPage() {
   return (
     <div className="min-h-screen bg-neutral-600 space-y-20  ">
       <Header />
+
       <div className="max-w-7xl mx-auto">
+        {show && (
+          <Alert className="alert-fade fixed z-50 left-1/2 -translate-x-1/2 top-15 max-w-md bg-black text-white border border-white">
+            <CheckCircle2Icon />
+            <AlertTitle>Food has been added to the cart!</AlertTitle>
+          </Alert>
+        )}
         <div className="flex items-center gap-6 mb-10">
           <button
             onClick={() => window.history.back()}
@@ -71,6 +84,7 @@ export default function CategoryPage() {
                       price: Number(dish.price),
                       image_url: dish.image_url,
                     });
+                    trigger();
                   }}
                   className="absolute bottom-3 right-3 bg-white w-10 h-10 rounded-full flex items-center justify-center shadow-lg hover:bg-[#ff5c47] transition-colors duration-200"
                 >
