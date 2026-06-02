@@ -1,6 +1,4 @@
-/* eslint-disable react-hooks/set-state-in-effect */
 "use client";
-
 import Link from "next/link";
 import { useEffect, useState } from "react";
 
@@ -11,10 +9,7 @@ type OrderItem = {
   dish_id: string;
   quantity: number;
   price: number;
-  dishes: {
-    name: string;
-    image_url: string;
-  } | null;
+  dishes: { name: string; image_url: string } | null;
 };
 
 type Order = {
@@ -26,14 +21,14 @@ type Order = {
   status: string;
 };
 
+const STATUSES = ["PENDING", "DELIVERED", "CANCELLED"];
+const PAGE_SIZE = 10;
+
 const STATUS_STYLES: Record<string, string> = {
   PENDING: "border border-red-400 text-red-500",
   DELIVERED: "border border-green-500 text-green-600",
   CANCELLED: "border border-gray-300 text-gray-500",
 };
-
-const STATUSES = ["PENDING", "DELIVERED", "CANCELLED"];
-const PAGE_SIZE = 10;
 
 export default function OrdersPage() {
   const [orders, setOrders] = useState<Order[]>([]);
@@ -42,19 +37,38 @@ export default function OrdersPage() {
   const [total, setTotal] = useState(0);
   const [expandedId, setExpandedId] = useState<string | null>(null);
   const [selected, setSelected] = useState<string[]>([]);
-
-  useEffect(() => {
-    setLoading(true);
-    fetch(`/api/admin/orders?page=${page}&limit=${PAGE_SIZE}`)
-      .then((res) => res.json())
-      .then((data) => {
-        setOrders(data.orders);
-        setTotal(data.total);
-        setLoading(false);
-      });
-  }, [page]);
+  const [bulkStatus, setBulkStatus] = useState("PENDING");
+  const [dateFrom, setDateFrom] = useState("");
+  const [dateTo, setDateTo] = useState("");
+  const [showDateFilter, setShowDateFilter] = useState(false);
 
   const totalPages = Math.ceil(total / PAGE_SIZE);
+
+  useEffect(() => {
+    const fetchOrders = () => {
+      setLoading(true);
+      const params = new URLSearchParams({
+        page: String(page),
+        limit: String(PAGE_SIZE),
+        ...(dateFrom && { from: dateFrom }),
+        ...(dateTo && { to: dateTo }),
+      });
+
+      fetch(`/api/admin/orders?${params}`, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      })
+        .then((res) => res.json())
+        .then((data) => {
+          setOrders(Array.isArray(data.orders) ? data.orders : []);
+          setTotal(data.total ?? 0);
+          setLoading(false);
+        });
+    };
+
+    fetchOrders();
+  }, [page, dateFrom, dateTo]);
 
   const toggleSelect = (id: string) => {
     setSelected((prev) =>
@@ -63,42 +77,61 @@ export default function OrdersPage() {
   };
 
   const toggleAll = () => {
-    if (selected.length === orders.length) {
-      setSelected([]);
-    } else {
-      setSelected(orders.map((o) => o.id));
-    }
+    setSelected(
+      selected.length === orders.length ? [] : orders.map((o) => o.id),
+    );
   };
 
   const handleStatusChange = async (id: string, status: string) => {
-    await fetch(`/api/admin/orders/${id}`, {
+    const token =
+      typeof window !== "undefined" ? localStorage.getItem("token") : null;
+
+    const res = await fetch(`/api/admin/orders/${id}`, {
       method: "PATCH",
-      headers: { "Content-Type": "application/json" },
+      headers: {
+        "Content-Type": "application/json",
+        ...(token && { Authorization: `Bearer ${token}` }),
+      },
       body: JSON.stringify({ status }),
     });
-    setOrders((prev) => prev.map((o) => (o.id === id ? { ...o, status } : o)));
+
+    if (res.ok) {
+      setOrders((prev) =>
+        prev.map((o) => (o.id === id ? { ...o, status } : o)),
+      );
+    } else {
+      const data = await res.json();
+      console.error("Failed to update status:", data.error);
+    }
   };
 
-  const handleBulkStatusChange = async (status: string) => {
+  const handleBulkStatusChange = async () => {
+    if (selected.length === 0) return;
+    const token =
+      typeof window !== "undefined" ? localStorage.getItem("token") : null;
+
     await Promise.all(
       selected.map((id) =>
         fetch(`/api/admin/orders/${id}`, {
           method: "PATCH",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ status }),
+          headers: {
+            "Content-Type": "application/json",
+            ...(token && { Authorization: `Bearer ${token}` }),
+          },
+          body: JSON.stringify({ status: bulkStatus }),
         }),
       ),
     );
     setOrders((prev) =>
-      prev.map((o) => (selected.includes(o.id) ? { ...o, status } : o)),
+      prev.map((o) =>
+        selected.includes(o.id) ? { ...o, status: bulkStatus } : o,
+      ),
     );
     setSelected([]);
   };
-
   const getPaginationPages = (): (number | string)[] => {
-    if (totalPages <= 7) {
+    if (totalPages <= 7)
       return Array.from({ length: totalPages }, (_, i) => i + 1);
-    }
     return [1, 2, 3, 4, 5, "...", totalPages];
   };
 
@@ -130,22 +163,85 @@ export default function OrdersPage() {
             <p className="text-sm text-gray-400">{total} items</p>
           </div>
           <div className="flex items-center gap-3">
-            <div className="flex items-center gap-2 border border-gray-200 rounded-lg px-4 py-2 text-sm text-gray-600">
-              <span>📅</span>
-              <span>Filter by date</span>
+            <div className="relative">
+              <button
+                onClick={() => setShowDateFilter((p) => !p)}
+                className="flex items-center gap-2 border border-gray-200 rounded-lg px-4 py-2 text-sm text-gray-600 hover:border-gray-400 transition-colors"
+              >
+                <span>📅</span>
+                <span>
+                  {dateFrom && dateTo
+                    ? `${dateFrom} → ${dateTo}`
+                    : "Filter by date"}
+                </span>
+              </button>
+
+              {showDateFilter && (
+                <div className="absolute right-0 top-11 z-20 bg-white border border-gray-100 rounded-2xl shadow-xl p-4 flex flex-col gap-3 min-w-64">
+                  <div>
+                    <label className="text-xs font-semibold text-gray-400 mb-1 block">
+                      From
+                    </label>
+                    <input
+                      type="date"
+                      value={dateFrom}
+                      onChange={(e) => setDateFrom(e.target.value)}
+                      className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-gray-400"
+                    />
+                  </div>
+                  <div>
+                    <label className="text-xs font-semibold text-gray-400 mb-1 block">
+                      To
+                    </label>
+                    <input
+                      type="date"
+                      value={dateTo}
+                      onChange={(e) => setDateTo(e.target.value)}
+                      className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-gray-400"
+                    />
+                  </div>
+                  <div className="flex gap-2">
+                    <button
+                      onClick={() => {
+                        setDateFrom("");
+                        setDateTo("");
+                        setShowDateFilter(false);
+                      }}
+                      className="flex-1 border border-gray-200 text-gray-500 rounded-lg py-2 text-sm hover:bg-gray-50"
+                    >
+                      Clear
+                    </button>
+                    <button
+                      onClick={() => setShowDateFilter(false)}
+                      className="flex-1 bg-black text-white rounded-lg py-2 text-sm hover:bg-gray-800"
+                    >
+                      Apply
+                    </button>
+                  </div>
+                </div>
+              )}
             </div>
-            <button
-              disabled={selected.length === 0}
-              onClick={() => {
-                const status = prompt(
-                  "Enter status: PENDING, DELIVERED, CANCELLED",
-                );
-                if (status) handleBulkStatusChange(status.toUpperCase());
-              }}
-              className="bg-gray-200 text-gray-500 px-4 py-2 rounded-lg text-sm font-medium disabled:opacity-50 hover:bg-gray-300 transition-colors"
-            >
-              Change delivery state
-            </button>
+            <div className="flex items-center gap-2">
+              <select
+                value={bulkStatus}
+                onChange={(e) => setBulkStatus(e.target.value)}
+                disabled={selected.length === 0}
+                className="border border-gray-200 rounded-lg px-3 py-2 text-sm text-gray-600 focus:outline-none disabled:opacity-50"
+              >
+                {STATUSES.map((s) => (
+                  <option key={s} value={s}>
+                    {s.charAt(0) + s.slice(1).toLowerCase()}
+                  </option>
+                ))}
+              </select>
+              <button
+                onClick={handleBulkStatusChange}
+                disabled={selected.length === 0}
+                className="bg-gray-200 text-gray-600 px-4 py-2 rounded-lg text-sm font-medium disabled:opacity-50 hover:bg-gray-300 transition-colors"
+              >
+                Change delivery state
+              </button>
+            </div>
           </div>
         </div>
         <div className="border border-gray-100 rounded-2xl overflow-hidden">
@@ -159,7 +255,6 @@ export default function OrdersPage() {
                       selected.length === orders.length && orders.length > 0
                     }
                     onChange={toggleAll}
-                    className="rounded"
                   />
                 </th>
                 <th className="p-4 w-10">№</th>
@@ -194,7 +289,6 @@ export default function OrdersPage() {
                           type="checkbox"
                           checked={selected.includes(order.id)}
                           onChange={() => toggleSelect(order.id)}
-                          className="rounded"
                         />
                       </td>
                       <td className="p-4 text-gray-500">
@@ -217,7 +311,13 @@ export default function OrdersPage() {
                         </button>
 
                         {expandedId === order.id && (
-                          <div className="absolute top-10 left-0 z-20 bg-white border border-gray-100 rounded-xl shadow-lg p-3 flex flex-col gap-2 min-w-56">
+                          <div
+                            className={`absolute left-0 z-20 bg-white border border-gray-100 rounded-xl shadow-lg p-3 flex flex-col gap-2 min-w-56 overflow-y-auto max-h-48 ${
+                              idx < Math.ceil(orders.length / 2)
+                                ? "top-10"
+                                : "bottom-full mb-1"
+                            }`}
+                          >
                             {order.food_order_items.map((item) => (
                               <div
                                 key={item.id}
@@ -251,10 +351,7 @@ export default function OrdersPage() {
                       </td>
                       <td className="p-4">
                         <div
-                          className={`flex items-center gap-1 px-3 py-1 rounded-full text-sm font-medium w-fit ${
-                            STATUS_STYLES[order.status] ??
-                            "border border-gray-300 text-gray-500"
-                          }`}
+                          className={`flex items-center px-3 py-1 rounded-full text-sm font-medium w-fit ${STATUS_STYLES[order.status] ?? "border border-gray-300 text-gray-500"}`}
                         >
                           <select
                             value={order.status}
@@ -284,7 +381,6 @@ export default function OrdersPage() {
           >
             ‹
           </button>
-
           {getPaginationPages().map((p, i) =>
             p === "..." ? (
               <span
@@ -307,7 +403,6 @@ export default function OrdersPage() {
               </button>
             ),
           )}
-
           <button
             onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
             disabled={page === totalPages}
