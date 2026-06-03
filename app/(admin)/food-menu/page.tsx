@@ -37,6 +37,7 @@ export default function FoodMenuPage() {
     description: "",
   });
   const [dishImage, setDishImage] = useState<string | null>(null);
+  const [dishImageFile, setDishImageFile] = useState<File | null>(null);
   const dishImageRef = useRef<HTMLInputElement>(null);
   const [addCategoryModal, setAddCategoryModal] = useState(false);
   const [categoryName, setCategoryName] = useState("");
@@ -77,16 +78,21 @@ export default function FoodMenuPage() {
   const handleAddDish = async () => {
     if (!dishForm.name || !dishForm.price || !addDishModal) return;
 
+    let imageUrl = "";
+
+    if (dishImageFile) {
+      imageUrl = await uploadImage(dishImageFile);
+    }
+
     const res = await fetch("/api/dishes", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        id: nanoid(),
         name: dishForm.name,
         price: Number(dishForm.price),
         description: dishForm.description,
         category_id: addDishModal,
-        image_url: dishImage ?? "",
+        image_url: imageUrl,
       }),
     });
 
@@ -95,7 +101,8 @@ export default function FoodMenuPage() {
     setAddDishModal(null);
     setDishForm({ name: "", price: "", description: "" });
     setDishImage(null);
-    showToast("New dish is being added to the menu");
+    setDishImageFile(null);
+    showToast("New dish added to the menu");
   };
   const openEditDish = (dish: Dish) => {
     setEditDish(dish);
@@ -144,13 +151,27 @@ export default function FoodMenuPage() {
   };
   const handleImageChange = (
     e: React.ChangeEvent<HTMLInputElement>,
-    setter: (v: string) => void,
+    setPreview: (v: string) => void,
+    setFile: (f: File) => void,
   ) => {
     const file = e.target.files?.[0];
     if (!file) return;
+    setFile(file);
     const reader = new FileReader();
-    reader.onload = () => setter(reader.result as string);
+    reader.onload = () => setPreview(reader.result as string);
     reader.readAsDataURL(file);
+  };
+  const uploadImage = async (file: File): Promise<string> => {
+    const formData = new FormData();
+    formData.append("file", file);
+
+    const res = await fetch("/api/upload", {
+      method: "POST",
+      body: formData,
+    });
+
+    const data = await res.json();
+    return data.url;
   };
 
   return (
@@ -430,7 +451,9 @@ export default function FoodMenuPage() {
                 type="file"
                 accept="image/*"
                 className="hidden"
-                onChange={(e) => handleImageChange(e, setDishImage)}
+                onChange={(e) =>
+                  handleImageChange(e, setDishImage, setDishImageFile)
+                }
               />
             </div>
 
@@ -533,11 +556,13 @@ export default function FoodMenuPage() {
                 </button>
               )}
               <input
-                ref={editImageRef}
+                ref={dishImageRef}
                 type="file"
                 accept="image/*"
                 className="hidden"
-                onChange={(e) => handleImageChange(e, setEditImage)}
+                onChange={(e) =>
+                  handleImageChange(e, setDishImage, setDishImageFile)
+                }
               />
             </div>
 
