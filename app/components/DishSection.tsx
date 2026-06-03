@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable react-hooks/set-state-in-effect */
 "use client";
 import { createPortal } from "react-dom";
@@ -27,7 +28,7 @@ export default function DishSection({ title, categoryId }: Props) {
   const [selected, setSelected] = useState<Dish | null>(null);
   const [quantity, setQuantity] = useState(1);
   const [mounted, setMounted] = useState(false);
-  const trigger = useAlertStore((s) => s.trigger);
+  const trigger = useAlertStore((s: { trigger: any }) => s.trigger);
 
   useEffect(() => {
     setMounted(true);

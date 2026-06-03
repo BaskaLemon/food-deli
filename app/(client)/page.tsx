@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 import Header from "../components/Header";
 import Offer from "../components/Offer";
@@ -9,7 +10,7 @@ import { Alert, AlertTitle } from "@/components/ui/alert";
 import { useAlertStore } from "@/lib/alertStore";
 
 export default function Home() {
-  const show = useAlertStore((s) => s.show);
+  const show = useAlertStore((s: { show: any }) => s.show);
 
   return (
     <div className="relative flex flex-col justify-center items-center gap-22 w-screen h-fit bg-neutral-600 font-sans">
