@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
+import { useEffect, useState } from "react";
 import Header from "../components/Header";
 import Offer from "../components/Offer";
 import Footer from "../components/Footer";
@@ -9,8 +10,41 @@ import { CheckCircle2Icon } from "lucide-react";
 import { Alert, AlertTitle } from "@/components/ui/alert";
 import { useAlertStore } from "@/lib/alertStore";
 
+type Dish = {
+  id: string;
+  name: string;
+  price: number;
+  image_url: string;
+  description: string;
+  category_id: number;
+};
+
+const CATEGORIES = [
+  { id: 1, title: "Appetizers" },
+  { id: 2, title: "Salads" },
+  { id: 3, title: "Pizzas" },
+  { id: 4, title: "Lunch Favorites" },
+  { id: 5, title: "Main Dishes" },
+  { id: 6, title: "Side Dish" },
+  { id: 7, title: "Brunch" },
+  { id: 8, title: "Desserts" },
+  { id: 9, title: "Beverages" },
+  { id: 10, title: "Fish & Sea Foods" },
+];
+
 export default function Home() {
   const show = useAlertStore((s: { show: any }) => s.show);
+  const [allDishes, setAllDishes] = useState<Dish[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetch("/api/dishes")
+      .then((r) => r.json())
+      .then((data) => {
+        setAllDishes(Array.isArray(data) ? data : []);
+        setLoading(false);
+      });
+  }, []);
 
   return (
     <div className="relative flex flex-col justify-center items-center gap-22 w-screen h-fit bg-neutral-600 font-sans">
@@ -29,36 +63,16 @@ export default function Home() {
       <div id="all" className="container flex flex-col items-center gap-13.5">
         <CategoryFilter />
 
-        <div id="category-1" className="w-full">
-          <DishSection title="Appetizers" categoryId={1} />
-        </div>
-        <div id="category-2" className="w-full">
-          <DishSection title="Salads" categoryId={2} />
-        </div>
-        <div id="category-3" className="w-full">
-          <DishSection title="Pizzas" categoryId={3} />
-        </div>
-        <div id="category-4" className="w-full">
-          <DishSection title="Lunch Favorites" categoryId={4} />
-        </div>
-        <div id="category-5" className="w-full">
-          <DishSection title="Main Dishes" categoryId={5} />
-        </div>
-        <div id="category-6" className="w-full">
-          <DishSection title="Side Dish" categoryId={6} />
-        </div>
-        <div id="category-7" className="w-full">
-          <DishSection title="Brunch" categoryId={7} />
-        </div>
-        <div id="category-8" className="w-full">
-          <DishSection title="Desserts" categoryId={8} />
-        </div>
-        <div id="category-9" className="w-full">
-          <DishSection title="Beverages" categoryId={9} />
-        </div>
-        <div id="category-10" className="w-full">
-          <DishSection title="Fish & Sea Foods" categoryId={10} />
-        </div>
+        {CATEGORIES.map((cat) => (
+          <div key={cat.id} id={`category-${cat.id}`} className="w-full">
+            <DishSection
+              title={cat.title}
+              categoryId={cat.id}
+              dishes={allDishes.filter((d) => d.category_id === cat.id)}
+              loading={loading}
+            />
+          </div>
+        ))}
       </div>
 
       <Footer />

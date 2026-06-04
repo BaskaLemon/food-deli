@@ -1,14 +1,12 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-/* eslint-disable react-hooks/set-state-in-effect */
 "use client";
-import { createPortal } from "react-dom";
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import DishSectionSkeleton from "./DishSectionSkeleton";
 import { useAlertStore } from "@/lib/alertStore";
 import { addToCart } from "@/lib/cart";
 
 /* eslint-disable @next/next/no-img-element */
+
 type Dish = {
   id: string;
   name: string;
@@ -20,30 +18,19 @@ type Dish = {
 type Props = {
   title: string;
   categoryId: number;
+  dishes: Dish[];
+  loading: boolean;
 };
 
-export default function DishSection({ title, categoryId }: Props) {
-  const [dishes, setDishes] = useState<Dish[]>([]);
-  const [loading, setLoading] = useState(true);
+export default function DishSection({
+  title,
+  categoryId,
+  dishes,
+  loading,
+}: Props) {
   const [selected, setSelected] = useState<Dish | null>(null);
   const [quantity, setQuantity] = useState(1);
-  const [mounted, setMounted] = useState(false);
-  const trigger = useAlertStore((s: { trigger: any }) => s.trigger);
-
-  useEffect(() => {
-    setMounted(true);
-  }, []);
-
-  useEffect(() => {
-    fetch(`/api/dishes?category_id=${categoryId}`)
-      .then((res) => res.json())
-      .then((data) => {
-        if (Array.isArray(data)) setDishes(data);
-        else if (Array.isArray(data.dishes)) setDishes(data.dishes);
-        else setDishes([]);
-        setLoading(false);
-      });
-  }, [categoryId]);
+  const trigger = useAlertStore((s) => s.trigger);
 
   const openDish = (dish: Dish) => {
     setSelected(dish);
@@ -130,82 +117,76 @@ export default function DishSection({ title, categoryId }: Props) {
           ))}
         </div>
       </div>
-
-      {mounted &&
-        selected &&
-        createPortal(
-          <>
-            <div
-              className="fixed inset-0 bg-black/50 z-40"
-              onClick={() => setSelected(null)}
+      {selected && (
+        <div
+          className="fixed inset-0 bg-black/50 z-40"
+          onClick={() => setSelected(null)}
+        />
+      )}
+      {selected && (
+        <div className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-50 bg-white rounded-3xl shadow-2xl w-full max-w-2xl flex overflow-hidden">
+          <div className="w-[45%] shrink-0">
+            <img
+              src={selected.image_url || "https://placehold.co/400x400"}
+              alt={selected.name}
+              className="w-full h-full object-cover"
             />
-            <div className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-50 bg-white rounded-3xl shadow-2xl w-full max-w-2xl flex overflow-hidden">
-              <div className="w-[45%] shrink-0 p-5">
-                <img
-                  src={selected.image_url || "https://placehold.co/400x400"}
-                  alt={selected.name}
-                  className="w-full h-full object-cover  rounded-2xl"
-                />
-              </div>
-              <div className="flex-1 p-8 flex flex-col justify-between">
-                <div className="flex justify-end">
-                  <button
-                    onClick={() => setSelected(null)}
-                    className="w-8 h-8 rounded-full border border-gray-200 flex items-center justify-center text-gray-400 hover:bg-gray-100 transition-colors"
-                  >
-                    ✕
-                  </button>
-                </div>
-
-                <div className="flex flex-col gap-4 mt-2">
-                  <h2 className="text-2xl font-black text-[#ff5c47]">
-                    {selected.name}
-                  </h2>
-                  <p className="text-gray-500 leading-relaxed text-sm">
-                    {selected.description}
+          </div>
+          <div className="flex-1 p-8 flex flex-col justify-between">
+            <div className="flex justify-end">
+              <button
+                onClick={() => setSelected(null)}
+                className="w-8 h-8 rounded-full border border-gray-200 flex items-center justify-center text-gray-400 hover:bg-gray-100 transition-colors"
+              >
+                ✕
+              </button>
+            </div>
+            <div className="flex flex-col gap-4 mt-2">
+              <h2 className="text-2xl font-black text-[#ff5c47]">
+                {selected.name}
+              </h2>
+              <p className="text-gray-500 leading-relaxed text-sm">
+                {selected.description}
+              </p>
+            </div>
+            <div className="flex flex-col gap-4 mt-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-xs text-gray-400 font-medium">
+                    Total price
+                  </p>
+                  <p className="text-2xl font-black text-gray-900">
+                    ${(Number(selected.price) * quantity).toFixed(2)}
                   </p>
                 </div>
-
-                <div className="flex flex-col gap-4 mt-6">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <p className="text-xs text-gray-400 font-medium">
-                        Total price
-                      </p>
-                      <p className="text-2xl font-black text-gray-900">
-                        ${(Number(selected.price) * quantity).toFixed(2)}
-                      </p>
-                    </div>
-                    <div className="flex items-center gap-3">
-                      <button
-                        onClick={() => setQuantity((q) => Math.max(1, q - 1))}
-                        className="w-10 h-10 rounded-full border border-gray-200 flex items-center justify-center text-gray-600 hover:bg-gray-100 transition-colors text-xl font-bold"
-                      >
-                        −
-                      </button>
-                      <span className="w-8 text-center font-black text-lg">
-                        {quantity}
-                      </span>
-                      <button
-                        onClick={() => setQuantity((q) => q + 1)}
-                        className="w-10 h-10 rounded-full border border-gray-200 flex items-center justify-center text-gray-600 hover:bg-gray-100 transition-colors text-xl font-bold"
-                      >
-                        +
-                      </button>
-                    </div>
-                  </div>
+                <div className="flex items-center gap-3">
                   <button
-                    onClick={handleAddToCart}
-                    className="w-full bg-black text-white rounded-2xl py-4 font-bold text-base hover:bg-gray-800 transition-colors"
+                    onClick={() => setQuantity((q) => Math.max(1, q - 1))}
+                    className="w-10 h-10 rounded-full border border-gray-200 flex items-center justify-center text-gray-600 hover:bg-gray-100 transition-colors text-xl font-bold"
                   >
-                    Add to cart
+                    −
+                  </button>
+                  <span className="w-8 text-center font-black text-lg">
+                    {quantity}
+                  </span>
+                  <button
+                    onClick={() => setQuantity((q) => q + 1)}
+                    className="w-10 h-10 rounded-full border border-gray-200 flex items-center justify-center text-gray-600 hover:bg-gray-100 transition-colors text-xl font-bold"
+                  >
+                    +
                   </button>
                 </div>
               </div>
+              <button
+                onClick={handleAddToCart}
+                className="w-full bg-black text-white rounded-2xl py-4 font-bold text-base hover:bg-gray-800 transition-colors"
+              >
+                Add to cart
+              </button>
             </div>
-          </>,
-          document.body,
-        )}
+          </div>
+        </div>
+      )}
     </>
   );
 }
