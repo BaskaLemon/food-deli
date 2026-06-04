@@ -41,13 +41,14 @@ export async function GET(req: Request) {
 
 export async function PATCH(
   req: Request,
-  { params }: { params: { id: string } },
+  { params }: { params: Promise<{ id: string }> },
 ) {
   try {
+    const { id } = await params;
     const { status } = await req.json();
 
     const order = await prisma.food_orders.update({
-      where: { id: params.id },
+      where: { id },
       data: { status },
     });
 
