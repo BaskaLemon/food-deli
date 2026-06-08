@@ -12,11 +12,11 @@ const pool =
   new pg.Pool({
     connectionString: process.env.DATABASE_URL,
 
-    max: 10,
+    max: 2,
 
-    idleTimeoutMillis: 30000,
+    idleTimeoutMillis: 10000,
 
-    connectionTimeoutMillis: 15000,
+    connectionTimeoutMillis: 10000,
   });
 
 if (process.env.NODE_ENV !== "production") {

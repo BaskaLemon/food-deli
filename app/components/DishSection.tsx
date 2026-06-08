@@ -125,11 +125,11 @@ export default function DishSection({
       )}
       {selected && (
         <div className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-50 bg-white rounded-3xl shadow-2xl w-full max-w-2xl flex overflow-hidden">
-          <div className="w-[45%] shrink-0">
+          <div className="w-[45%] shrink-0 p-5">
             <img
               src={selected.image_url || "https://placehold.co/400x400"}
               alt={selected.name}
-              className="w-full h-full object-cover"
+              className="w-full h-full object-cover rounded-2xl"
             />
           </div>
           <div className="flex-1 p-8 flex flex-col justify-between">

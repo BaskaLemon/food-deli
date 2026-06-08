@@ -14,6 +14,7 @@ export async function PATCH(
         price: body.price,
         description: body.description,
         image_url: body.image_url,
+        category_id: body.category_id,
       },
     });
     return Response.json(dish);

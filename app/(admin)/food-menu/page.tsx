@@ -3,6 +3,14 @@
 import { useEffect, useRef, useState } from "react";
 import { nanoid } from "nanoid";
 import Link from "next/link";
+import {
+  Combobox,
+  ComboboxContent,
+  ComboboxEmpty,
+  ComboboxInput,
+  ComboboxItem,
+  ComboboxList,
+} from "@/components/ui/combobox";
 
 /* eslint-disable @next/next/no-img-element */
 
@@ -41,6 +49,7 @@ export default function FoodMenuPage() {
   const dishImageRef = useRef<HTMLInputElement>(null);
   const [addCategoryModal, setAddCategoryModal] = useState(false);
   const [categoryName, setCategoryName] = useState("");
+  const [categoryIcon, setCategoryIcon] = useState("");
   const [editDish, setEditDish] = useState<Dish | null>(null);
   const [editForm, setEditForm] = useState({
     name: "",
@@ -48,8 +57,17 @@ export default function FoodMenuPage() {
     description: "",
   });
   const [editImage, setEditImage] = useState<string | null>(null);
+  const [addingCategory, setAddingCategory] = useState(false);
+  const [selectedCategory, setSelectedCategory] = useState<string>("");
+  const [editCategory, setEditCategory] = useState<string>("");
   const editImageRef = useRef<HTMLInputElement>(null);
-
+  const frameworks = [
+    "Next.js",
+    "SvelteKit",
+    "Nuxt.js",
+    "Remix",
+    "Astro",
+  ] as const;
   const showToast = (message: string) => {
     setToast({ message });
     setTimeout(() => setToast(null), 3000);
@@ -79,7 +97,6 @@ export default function FoodMenuPage() {
     if (!dishForm.name || !dishForm.price || !addDishModal) return;
 
     let imageUrl = "";
-
     if (dishImageFile) {
       imageUrl = await uploadImage(dishImageFile);
     }
@@ -91,7 +108,7 @@ export default function FoodMenuPage() {
         name: dishForm.name,
         price: Number(dishForm.price),
         description: dishForm.description,
-        category_id: addDishModal,
+        category_id: selectedCategory ? Number(selectedCategory) : addDishModal,
         image_url: imageUrl,
       }),
     });
@@ -102,6 +119,7 @@ export default function FoodMenuPage() {
     setDishForm({ name: "", price: "", description: "" });
     setDishImage(null);
     setDishImageFile(null);
+    setSelectedCategory("");
     showToast("New dish added to the menu");
   };
   const openEditDish = (dish: Dish) => {
@@ -112,6 +130,7 @@ export default function FoodMenuPage() {
       description: dish.description,
     });
     setEditImage(dish.image_url);
+    setEditCategory(String(dish.category_id));
   };
 
   const handleEditDish = async () => {
@@ -125,6 +144,7 @@ export default function FoodMenuPage() {
         price: Number(editForm.price),
         description: editForm.description,
         image_url: editImage ?? editDish.image_url,
+        category_id: editCategory ? Number(editCategory) : editDish.category_id,
       }),
     });
 
@@ -135,18 +155,20 @@ export default function FoodMenuPage() {
   };
   const handleAddCategory = async () => {
     if (!categoryName.trim()) return;
+    setAddingCategory(true);
 
-    const res = await fetch("/api/categories", {
+    await fetch("/api/categories", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify([{ name: categoryName }]),
+      body: JSON.stringify([{ name: categoryName, icon: categoryIcon }]),
     });
 
-    const data = await res.json();
     const newCat = await fetch("/api/categories").then((r) => r.json());
     setCategories(newCat);
     setAddCategoryModal(false);
     setCategoryName("");
+    setCategoryIcon("");
+    setAddingCategory(false);
     showToast("New Category is being added to the menu");
   };
   const handleImageChange = (
@@ -260,9 +282,10 @@ export default function FoodMenuPage() {
 
             <button
               onClick={() => setAddCategoryModal(true)}
-              className="w-8 h-8 flex items-center justify-center rounded-full bg-red-500 text-white hover:bg-red-600 transition-colors text-lg font-bold"
+              disabled={addingCategory}
+              className="w-8 h-8 flex items-center justify-center rounded-full bg-red-500 text-white hover:bg-red-600 transition-colors text-lg font-bold disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              +
+              {addingCategory ? "..." : "+"}
             </button>
           </div>
         </div>
@@ -301,7 +324,10 @@ export default function FoodMenuPage() {
 
                   <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
                     <button
-                      onClick={() => setAddDishModal(cat.id)}
+                      onClick={() => {
+                        setAddDishModal(cat.id);
+                        setSelectedCategory(String(cat.id));
+                      }}
                       className="flex flex-col items-center justify-center gap-3 rounded-2xl border-2 border-dashed border-red-300 p-6 hover:border-red-400 hover:bg-red-50 transition-all min-h-50"
                     >
                       <div className="w-10 h-10 rounded-full bg-red-500 flex items-center justify-center text-white text-2xl font-bold">
@@ -355,7 +381,10 @@ export default function FoodMenuPage() {
         <>
           <div
             className="fixed inset-0 bg-black/30 z-40"
-            onClick={() => setAddDishModal(null)}
+            onClick={() => {
+              setAddDishModal(null);
+              setSelectedCategory("");
+            }}
           />
           <div className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-50 bg-white rounded-2xl p-6 w-full max-w-md shadow-2xl">
             <div className="flex items-center justify-between mb-5">
@@ -364,7 +393,10 @@ export default function FoodMenuPage() {
                 {categories.find((c) => c.id === addDishModal)?.name}
               </h2>
               <button
-                onClick={() => setAddDishModal(null)}
+                onClick={() => {
+                  setAddDishModal(null);
+                  setSelectedCategory("");
+                }}
                 className="w-7 h-7 flex items-center justify-center rounded-full border border-gray-200 text-gray-400 hover:bg-gray-100"
               >
                 ✕
@@ -400,6 +432,34 @@ export default function FoodMenuPage() {
                   className="w-full border border-gray-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:border-gray-400"
                 />
               </div>
+            </div>
+            <div className="mb-4">
+              <label className="text-xs font-semibold text-gray-500 mb-1 block">
+                Category
+              </label>
+              <Combobox
+                items={categories.map((c) => String(c.id))}
+                value={selectedCategory}
+                onValueChange={(val) => setSelectedCategory(val ?? "")}
+              >
+                <ComboboxInput
+                  placeholder={
+                    categories.find((c) => c.id === addDishModal)?.name ??
+                    "Select category"
+                  }
+                />
+                <ComboboxContent>
+                  <ComboboxEmpty>No categories found.</ComboboxEmpty>
+                  <ComboboxList>
+                    {(item) => (
+                      <ComboboxItem key={item} value={item}>
+                        {categories.find((c) => String(c.id) === item)?.name ??
+                          item}
+                      </ComboboxItem>
+                    )}
+                  </ComboboxList>
+                </ComboboxContent>
+              </Combobox>
             </div>
 
             <div className="mb-4">
@@ -511,7 +571,34 @@ export default function FoodMenuPage() {
                 />
               </div>
             </div>
-
+            <div className="mb-4">
+              <label className="text-xs font-semibold text-gray-500 mb-1 block">
+                Category
+              </label>
+              <Combobox
+                items={categories.map((c) => String(c.id))}
+                value={editCategory}
+                onValueChange={(val) => setEditCategory(val ?? "")}
+              >
+                <ComboboxInput
+                  placeholder={
+                    categories.find((c) => String(c.id) === editCategory)
+                      ?.name ?? "Select category"
+                  }
+                />
+                <ComboboxContent>
+                  <ComboboxEmpty>No categories found.</ComboboxEmpty>
+                  <ComboboxList>
+                    {(item) => (
+                      <ComboboxItem key={item} value={item}>
+                        {categories.find((c) => String(c.id) === item)?.name ??
+                          item}
+                      </ComboboxItem>
+                    )}
+                  </ComboboxList>
+                </ComboboxContent>
+              </Combobox>
+            </div>
             <div className="mb-4">
               <label className="text-xs font-semibold text-gray-500 mb-1 block">
                 Ingredients
@@ -624,11 +711,23 @@ export default function FoodMenuPage() {
                 onChange={(e) => setCategoryName(e.target.value)}
                 className="w-full border border-gray-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:border-gray-400"
               />
+
+              <label className="text-xs font-semibold text-gray-500 mt-3 mb-1 block">
+                Icon
+              </label>
+              <input
+                type="text"
+                placeholder="Type an emoji e.g. 🍕"
+                value={categoryIcon}
+                onChange={(e) => setCategoryIcon(e.target.value)}
+                className="w-full border border-gray-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:border-gray-400"
+              />
             </div>
 
             <button
               onClick={handleAddCategory}
-              className="w-full bg-black text-white rounded-xl py-2.5 text-sm font-semibold hover:bg-gray-800 transition-colors"
+              disabled={addingCategory}
+              className="w-full bg-black text-white rounded-xl py-2.5 text-sm font-semibold hover:bg-gray-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             >
               Add category
             </button>
